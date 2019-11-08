@@ -13,6 +13,7 @@ router.get('/', (req, res) => {
 
 router.post('/', (req, res) => {
     validateTodoRenderError(req, res, todo => {
+        todo.done = false
         database.insert(todo, (err, doc) => {
             if (err) res.render('error', { message: err.message })
             res.render('single', { todo: doc })
@@ -31,6 +32,7 @@ router.get('/:id', (req, res) => {
 router.put('/:id', (req, res) => {
     validateTodoRenderError(req, res, todo => {
         let id = req.params.id
+        todo.done = typeof req.body.done !== 'undefined'
         database.update({ _id: id }, todo, {}, (err, n, upsert) => {
             if (err) res.status(500).render('error', { message: err.message })
             res.redirect(`/todo/${id}`)
@@ -69,7 +71,7 @@ function validateTodoRenderError(req, res, callback) {
     if (validTodo(req.body))
         callback({
             title: req.body.title, description: req.body.description,
-            done: false, priority: req.body.priority, date: new Date()
+            priority: req.body.priority, date: new Date()
         })
     else
         res.status(500).render('error', { message: 'Invalid Todo' })

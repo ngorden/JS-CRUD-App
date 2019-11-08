@@ -2,7 +2,10 @@
 <ul class="list-group">
     {{#each todos}}
     <a class="list-group-item d-flex justify-content-between align-items-center" href="/todo/{{_id}}">
-        {{title}}
+        <div>
+            {{#if done}}<span class="badge badge-info">Done</span>{{/if}}
+            {{title}}
+        </div>
         <span class="badge badge-primary badge-pill">{{priority}}</span>
     </a>
     {{/each}}
