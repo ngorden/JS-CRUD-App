@@ -18,6 +18,7 @@
 </div>
 <form action="/todo/{{_id}}?_method=DELETE" method="post">
     <a class="btn btn-link" href="/todo">Back to List</a>
+    <a class="btn btn-info" href="/todo/{{_id}}/edit">Edit</a>
     <input class="btn btn-danger" type="submit" value="Delete">
 </form>
 {{/with}}

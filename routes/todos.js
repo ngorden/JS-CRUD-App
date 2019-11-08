@@ -1,5 +1,5 @@
 const express = require('express')
-const database = require('../db/pool')
+const database = require('../db/pool').db
 
 const router = express.Router()
 
@@ -12,17 +12,12 @@ router.get('/', (req, res) => {
 })
 
 router.post('/', (req, res) => {
-    if (validTodo(req.body)) {
-        let todo = {
-            title: req.body.title, description: req.body.description,
-            done: false, priority: req.body.priority, date: new Date()
-        }
+    validateTodoRenderError(req, res, todo => {
         database.insert(todo, (err, doc) => {
             if (err) res.render('error', { message: err.message })
             res.render('single', { todo: doc })
         })
-    } else
-        res.status(500).render('error', { message: 'Invalid Todo' })
+    })
 })
 
 router.get('/new', (req, res) => {
@@ -31,9 +26,15 @@ router.get('/new', (req, res) => {
 
 router.get('/:id', (req, res) => {
     let id = req.params.id
-    database.findOne({ _id: id }, (err, doc) => {
-        if (err) res.status(500).render('error', { message: err.message })
-        res.render('single', { todo: doc })
+    respondAndRenderTodo(id, res, 'single')
+})
+router.put('/:id', (req, res) => {
+    validateTodoRenderError(req, res, todo => {
+        let id = req.params.id
+        database.update({ _id: id }, todo, {}, (err, n, upsert) => {
+            if (err) res.status(500).render('error', { message: err.message })
+            res.redirect(`/todo/${id}`)
+        })
     })
 })
 
@@ -45,11 +46,33 @@ router.delete('/:id', (req, res) => {
     })
 })
 
+router.get('/:id/edit', (req, res) => {
+    let id = req.params.id
+    respondAndRenderTodo(id, res, 'edit')
+})
+
+function respondAndRenderTodo(id, res, viewName) {
+    database.findOne({ _id: id }, (err, doc) => {
+        if (err) res.status(500).render('error', { message: err.message })
+        res.render(viewName, { todo: doc })
+    })
+}
+
 function validTodo(todo) {
     return typeof todo.title === 'string' &&
         todo.title.trim() !== '' &&
         typeof todo.priority !== 'undefined' &&
         !isNaN(todo.priority)
+}
+
+function validateTodoRenderError(req, res, callback) {
+    if (validTodo(req.body))
+        callback({
+            title: req.body.title, description: req.body.description,
+            done: false, priority: req.body.priority, date: new Date()
+        })
+    else
+        res.status(500).render('error', { message: 'Invalid Todo' })
 }
 
 module.exports = router
