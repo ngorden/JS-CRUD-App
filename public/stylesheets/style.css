@@ -1,0 +1,11 @@
+.card {
+    margin-bottom: 1em;
+}
+
+body {
+    padding-top: 2em;
+}
+
+form>div.form-group {
+    margin: 2em auto 2em auto;
+}
