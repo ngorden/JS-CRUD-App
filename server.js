@@ -5,6 +5,8 @@ const methodOverride = require('method-override')
 const morgan = require('morgan')
 const path = require('path')
 
+const routes = require('./routes/index')
+
 const app = express()
 
 app.set('views', path.join(__dirname, 'views'))
@@ -24,6 +26,8 @@ app.use(bodyParser.urlencoded({ extended: true }))
 app.use(cookieParser())
 app.use(express.static(path.join(__dirname, 'public')))
 app.use(methodOverride('_method'))
+
+app.use('/', routes)
 
 app.use((req, res, next) => {
     let err = new Error('404 - Not Found')
