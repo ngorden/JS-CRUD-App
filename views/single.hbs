@@ -1,0 +1,23 @@
+{{#with todo}}
+<div class="card">
+    {{#if done}}
+    <div class="card-header">
+        DONE
+    </div>
+    {{/if}}
+    <div class="card-body">
+        <h5 class="card-title">
+            {{title}}
+            <span class="badge badge-pill badge-info">{{priority}}</span>
+        </h5>
+        <p class="card-text">{{description}}</p>
+    </div>
+    <div class="card-footer text-muted">
+        {{date}}
+    </div>
+</div>
+<form action="/todo/{{_id}}?_method=DELETE" method="post">
+    <a class="btn btn-link" href="/todo">Back to List</a>
+    <input class="btn btn-danger" type="submit" value="Delete">
+</form>
+{{/with}}

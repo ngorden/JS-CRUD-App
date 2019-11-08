@@ -29,7 +29,7 @@ app.use(express.static(path.join(__dirname, 'public')))
 app.use(methodOverride('_method'))
 
 app.use('/', routes)
-app.use('/todos', todos)
+app.use('/todo', todos)
 
 app.use((req, res, next) => {
     let err = new Error('404 - Not Found')
